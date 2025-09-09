@@ -64,12 +64,6 @@ Exemplo de chamada
       'RATO,BOLA', 'RATO,NOVELO', 'Rex,Fofo');
 ```
 
-### INSTALANDO E RODANDO NA SUA MÁQUINA
-1. Instalar o [Node](https://nodejs.org/en/)
-2. Instalar dependencias do projeto com o seguinte comando:
-```bash
-npm install
-```
 
 ### VALIDANDO A SOLUÇÃO
 Junto com a estrutura básica você está recebendo alguns cenários de testes no arquivo `abrigo-animais.test.js` para auxiliar na validação da sua solução. Recomendamos que você crie mais casos de teste para aumentar a confiabilidade da sua solução.
