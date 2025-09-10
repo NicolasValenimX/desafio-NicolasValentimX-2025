@@ -10,95 +10,86 @@ class AbrigoAnimais {
       Loco: { tipo: "jabuti", brinquedos: ["SKATE", "RATO"], especial: true },
     };
 
-    this.brinquedosValidos = ["RATO", "BOLA", "LASER", "CAIXA", "NOVELO", "SKATE"];
+    this.brinquedosPermitidos = ["RATO", "BOLA", "LASER", "CAIXA", "NOVELO", "SKATE"];
   }
 
-  encontraPessoas(brinquedosPessoa1, brinquedosPessoa2, ordemAnimais) {
+  encontraPessoas(brinquedos1, brinquedos2, ordemAnimais) {
     try {
-      const p1 = brinquedosPessoa1.split(",");
-      const p2 = brinquedosPessoa2.split(",");
+      const pessoa1 = brinquedos1.split(",");
+      const pessoa2 = brinquedos2.split(",");
       const ordem = ordemAnimais.split(",");
 
-      this.validarBrinquedos(p1);
-      this.validarBrinquedos(p2);
-      this.validarAnimais(ordem);
+      this.checarBrinquedos(pessoa1);
+      this.checarBrinquedos(pessoa2);
+      this.checarAnimais(ordem);
 
-      const adotados = { p1: [], p2: [] };
+      const adotados = { pessoa1: [], pessoa2: [] };
       const resultado = [];
 
-      for (let nome of ordem) {
-        const animal = this.animais[nome];
-        const dono = this.decidirDono(animal, p1, p2, adotados);
-        resultado.push(`${nome} - ${dono}`);
+      for (const nomeAnimal of ordem) {
+        const animal = this.animais[nomeAnimal];
+        resultado.push(`${nomeAnimal} - ${this.escolherDono(animal, pessoa1, pessoa2, adotados)}`);
       }
 
       return { lista: resultado.sort(), erro: null };
-    } catch (err) {
-      return { erro: err.message, lista: null };
+    } catch (erro) {
+      return { lista: null, erro: erro.message };
     }
   }
 
-  validarBrinquedos(lista) {
-    const set = new Set();
-    for (let b of lista) {
-      if (!this.brinquedosValidos.includes(b)) {
-        throw new Error("Brinquedo inválido");
-      }
-      if (set.has(b)) {
-        throw new Error("Brinquedo inválido");
-      }
-      set.add(b);
+  checarBrinquedos(lista) {
+    const vistos = new Set();
+    for (const b of lista) {
+      if (!this.brinquedosPermitidos.includes(b)) throw new Error("Brinquedo inválido");
+      if (vistos.has(b)) throw new Error("Brinquedo inválido");
+      vistos.add(b);
     }
   }
 
-  validarAnimais(lista) {
-    const set = new Set();
-    for (let a of lista) {
-      if (!this.animais[a]) {
-        throw new Error("Animal inválido");
-      }
-      if (set.has(a)) {
-        throw new Error("Animal inválido");
-      }
-      set.add(a);
+  checarAnimais(lista) {
+    const vistos = new Set();
+    for (const a of lista) {
+      if (!this.animais[a]) throw new Error("Animal inválido");
+      if (vistos.has(a)) throw new Error("Animal inválido");
+      vistos.add(a);
     }
   }
 
-  subsequencia(favoritos, brinquedosPessoa) {
-    let idx = 0;
-    for (let b of brinquedosPessoa) {
-      if (b === favoritos[idx]) idx++;
-      if (idx === favoritos.length) return true;
+  verificaSubsequencia(favoritos, brinquedosPessoa) {
+    let pos = 0;
+    for (const b of brinquedosPessoa) {
+      if (b === favoritos[pos]) pos++;
+      if (pos === favoritos.length) return true;
     }
     return false;
   }
 
-  decidirDono(animal, p1, p2, adotados) {
+  escolherDono(animal, pessoa1, pessoa2, adotados) {
     if (animal.especial) {
-      
-      if (adotados.p1.length > 0 && adotados.p1.length < 3) {
-        adotados.p1.push(animal);
+      // Loco só quer companhia, não se importa com a ordem
+      if (adotados.pessoa1.length > 0 && adotados.pessoa1.length < 3) {
+        adotados.pessoa1.push(animal);
         return "pessoa 1";
       }
-      if (adotados.p2.length > 0 && adotados.p2.length < 3) {
-        adotados.p2.push(animal);
+      if (adotados.pessoa2.length > 0 && adotados.pessoa2.length < 3) {
+        adotados.pessoa2.push(animal);
         return "pessoa 2";
       }
       return "abrigo";
     }
 
-    const cond1 = this.subsequencia(animal.brinquedos, p1);
-    const cond2 = this.subsequencia(animal.brinquedos, p2);
+    const p1Valido = this.verificaSubsequencia(animal.brinquedos, pessoa1);
+    const p2Valido = this.verificaSubsequencia(animal.brinquedos, pessoa2);
 
-    if (cond1 && cond2) return "abrigo";
+    if (p1Valido && p2Valido) return "abrigo";
 
-    if (cond1 && adotados.p1.length < 3) {
-      adotados.p1.push(animal);
+    if (p1Valido && adotados.pessoa1.length < 3) {
+      adotados.pessoa1.push(animal);
       return "pessoa 1";
     }
 
-    if (cond2 && adotados.p2.length < 3) {
-      adotados.p2.push(animal);
+    if (p2Valido && adotados.pessoa2.length < 3) {
+      adotados.pessoa2.push(animal);
       return "pessoa 2";
     }
 
