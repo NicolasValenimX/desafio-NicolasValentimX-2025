@@ -1,5 +1,6 @@
 class AbrigoAnimais {
   constructor() {
+    // Define os animais do abrigo e seus brinquedos favoritos
     this.animais = {
       Rex: { tipo: "cão", brinquedos: ["RATO", "BOLA"] },
       Mimi: { tipo: "gato", brinquedos: ["BOLA", "LASER"] },
@@ -10,15 +11,21 @@ class AbrigoAnimais {
       Loco: { tipo: "jabuti", brinquedos: ["SKATE", "RATO"], especial: true },
     };
 
+    // Lista de brinquedos válidos que as pessoas podem informar
+
     this.brinquedosPermitidos = ["RATO", "BOLA", "LASER", "CAIXA", "NOVELO", "SKATE"];
   }
-
+  
+   // Função principal que encontra as pessoas que podem adotar os animais
   encontraPessoas(brinquedos1, brinquedos2, ordemAnimais) {
     try {
+      // Converte as strings de entrada em arrays
       const pessoa1 = brinquedos1.split(",");
       const pessoa2 = brinquedos2.split(",");
       const ordem = ordemAnimais.split(",");
-
+      
+      // Valida se os brinquedos e animais são válidos
+      
       this.checarBrinquedos(pessoa1);
       this.checarBrinquedos(pessoa2);
       this.checarAnimais(ordem);
@@ -26,13 +33,17 @@ class AbrigoAnimais {
       const adotados = { pessoa1: [], pessoa2: [] };
       const resultado = [];
 
+      // Para cada animal na ordem, decide quem pode adotar
+
       for (const nomeAnimal of ordem) {
         const animal = this.animais[nomeAnimal];
         resultado.push(`${nomeAnimal} - ${this.escolherDono(animal, pessoa1, pessoa2, adotados)}`);
       }
 
+      // Retorna a lista em ordem alfabética
+
       return { lista: resultado.sort(), erro: null };
-    } catch (erro) {
+    } catch (erro) { // Retorna mensagem de erro se algo estiver inválido
       return { lista: null, erro: erro.message };
     }
   }
